@@ -1,0 +1,32 @@
+{
+    "name": "meemalabs/analytics-laravel",
+    "description": "Laravel log driver for ts-analytics error collection",
+    "type": "library",
+    "license": "MIT",
+    "keywords": ["laravel", "analytics", "error-tracking", "logging", "monolog"],
+    "authors": [
+        {
+            "name": "Meema Labs",
+            "email": "dev@meema.io"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "illuminate/support": "^11.0|^12.0",
+        "monolog/monolog": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Meemalabs\\Analytics\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Meemalabs\\Analytics\\AnalyticsServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
