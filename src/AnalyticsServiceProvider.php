@@ -37,7 +37,6 @@ class AnalyticsServiceProvider extends ServiceProvider
 
             $handler = new AnalyticsLogHandler(
                 token: $token,
-                endpoint: config('analytics.endpoint', ''),
                 siteId: config('analytics.site_id', ''),
                 environment: config('analytics.environment', 'production'),
                 level: $level,

@@ -17,7 +17,6 @@ abstract class TestCase extends BaseTestCase
     protected function defineEnvironment($app): void
     {
         $app['config']->set('analytics.token', 'ak_test_token');
-        $app['config']->set('analytics.endpoint', 'https://analytics.test');
         $app['config']->set('analytics.site_id', 'test-site');
         $app['config']->set('analytics.environment', 'testing');
         $app['config']->set('analytics.enabled', true);

@@ -11,13 +11,21 @@ use RuntimeException;
 
 class AnalyticsLogHandlerTest extends TestCase
 {
+    private string $collectUrl;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->collectUrl = AnalyticsLogHandler::ENDPOINT.'/errors/collect';
+    }
+
     public function test_sends_post_request_to_correct_endpoint(): void
     {
-        Http::fake(['https://analytics.test/errors/collect' => Http::response(null, 204)]);
+        Http::fake([$this->collectUrl => Http::response(null, 204)]);
 
         $handler = new AnalyticsLogHandler(
             token: 'ak_test',
-            endpoint: 'https://analytics.test',
             siteId: 'test-site',
             environment: 'testing',
         );
@@ -25,7 +33,7 @@ class AnalyticsLogHandlerTest extends TestCase
         $handler->handle($this->makeLogRecord(Level::Error, 'Test error'));
 
         Http::assertSent(function ($request) {
-            return $request->url() === 'https://analytics.test/errors/collect'
+            return $request->url() === $this->collectUrl
                 && $request->header('X-Analytics-Token')[0] === 'ak_test'
                 && $request['message'] === 'Test error';
         });
@@ -33,11 +41,10 @@ class AnalyticsLogHandlerTest extends TestCase
 
     public function test_sends_exception_payload_when_context_has_throwable(): void
     {
-        Http::fake(['https://analytics.test/errors/collect' => Http::response(null, 204)]);
+        Http::fake([$this->collectUrl => Http::response(null, 204)]);
 
         $handler = new AnalyticsLogHandler(
             token: 'ak_test',
-            endpoint: 'https://analytics.test',
             siteId: 'test-site',
             environment: 'testing',
         );
@@ -59,11 +66,10 @@ class AnalyticsLogHandlerTest extends TestCase
 
     public function test_sends_message_payload_when_no_exception_in_context(): void
     {
-        Http::fake(['https://analytics.test/errors/collect' => Http::response(null, 204)]);
+        Http::fake([$this->collectUrl => Http::response(null, 204)]);
 
         $handler = new AnalyticsLogHandler(
             token: 'ak_test',
-            endpoint: 'https://analytics.test',
             siteId: 'test-site',
             environment: 'testing',
         );
@@ -79,11 +85,10 @@ class AnalyticsLogHandlerTest extends TestCase
 
     public function test_does_not_throw_on_http_failure(): void
     {
-        Http::fake(['https://analytics.test/errors/collect' => Http::response(null, 500)]);
+        Http::fake([$this->collectUrl => Http::response(null, 500)]);
 
         $handler = new AnalyticsLogHandler(
             token: 'ak_test',
-            endpoint: 'https://analytics.test',
             siteId: 'test-site',
             environment: 'testing',
         );
@@ -102,7 +107,6 @@ class AnalyticsLogHandlerTest extends TestCase
 
         $handler = new AnalyticsLogHandler(
             token: 'ak_test',
-            endpoint: 'https://analytics.test',
             siteId: 'test-site',
             environment: 'testing',
         );
@@ -119,7 +123,6 @@ class AnalyticsLogHandlerTest extends TestCase
 
         $handler = new AnalyticsLogHandler(
             token: 'ak_test',
-            endpoint: 'https://analytics.test',
             siteId: 'test-site',
             environment: 'testing',
             level: Level::Error,
@@ -131,31 +134,12 @@ class AnalyticsLogHandlerTest extends TestCase
         Http::assertNothingSent();
     }
 
-    public function test_endpoint_trailing_slash_is_normalized(): void
-    {
-        Http::fake(['https://analytics.test/errors/collect' => Http::response(null, 204)]);
-
-        $handler = new AnalyticsLogHandler(
-            token: 'ak_test',
-            endpoint: 'https://analytics.test/',
-            siteId: 'test-site',
-            environment: 'testing',
-        );
-
-        $handler->handle($this->makeLogRecord(Level::Error, 'Test'));
-
-        Http::assertSent(function ($request) {
-            return $request->url() === 'https://analytics.test/errors/collect';
-        });
-    }
-
     public function test_payload_includes_framework_and_sdk_version(): void
     {
-        Http::fake(['https://analytics.test/errors/collect' => Http::response(null, 204)]);
+        Http::fake([$this->collectUrl => Http::response(null, 204)]);
 
         $handler = new AnalyticsLogHandler(
             token: 'ak_test',
-            endpoint: 'https://analytics.test',
             siteId: 'test-site',
             environment: 'testing',
         );

@@ -10,13 +10,15 @@ use Throwable;
 
 class AnalyticsLogHandler extends AbstractProcessingHandler
 {
+    // TODO: update once the production endpoint is finalized
+    public const ENDPOINT = 'https://analytics.stacks.com';
+
     private ErrorReportBuilder $builder;
 
     private string $url;
 
     public function __construct(
         private string $token,
-        string $endpoint,
         string $siteId,
         string $environment,
         Level $level = Level::Error,
@@ -24,7 +26,7 @@ class AnalyticsLogHandler extends AbstractProcessingHandler
     ) {
         parent::__construct($level, $bubble);
 
-        $this->url = rtrim($endpoint, '/').'/errors/collect';
+        $this->url = self::ENDPOINT.'/errors/collect';
         $this->builder = new ErrorReportBuilder($siteId, $environment);
     }
 

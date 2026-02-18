@@ -22,7 +22,6 @@ Add these to your `.env`:
 
 ```dotenv
 ANALYTICS_TOKEN=ak_your_api_key
-ANALYTICS_ENDPOINT=https://analytics.example.com
 ANALYTICS_SITE_ID=my-site
 ```
 
@@ -51,7 +50,6 @@ All options in `config/analytics.php`:
 | Key | Env Var | Default | Description |
 |-----|---------|---------|-------------|
 | `token` | `ANALYTICS_TOKEN` | `''` | API key (must start with `ak_`) |
-| `endpoint` | `ANALYTICS_ENDPOINT` | `''` | Base URL of your analytics server |
 | `site_id` | `ANALYTICS_SITE_ID` | `''` | Site identifier |
 | `environment` | `ANALYTICS_ENVIRONMENT` | `APP_ENV` | Environment name in reports |
 | `enabled` | `ANALYTICS_ENABLED` | `true` | Kill switch to disable reporting |
@@ -63,7 +61,7 @@ All options in `config/analytics.php`:
 2. When Laravel logs an error (or an exception is thrown), the log record reaches the `AnalyticsLogHandler`
 3. If the log context contains a `Throwable`, a full error report is built with class name, message, stack trace, file, and line
 4. Otherwise, a message-level report is built from the log message
-5. The report is sent via HTTP POST to `{endpoint}/errors/collect` with the `X-Analytics-Token` header
+5. The report is sent via HTTP POST to the analytics endpoint (`/errors/collect`) with the `X-Analytics-Token` header
 6. The HTTP call uses a 5-second timeout and silently catches failures — logging never crashes the app
 
 ## Requirements

@@ -4,15 +4,24 @@ namespace Meemalabs\Analytics\Tests;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Meemalabs\Analytics\AnalyticsLogHandler;
 use Monolog\Logger;
 use Psr\Log\NullLogger;
 
 class AnalyticsServiceProviderTest extends TestCase
 {
+    private string $collectUrl;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->collectUrl = AnalyticsLogHandler::ENDPOINT.'/errors/collect';
+    }
+
     public function test_config_is_merged(): void
     {
         $this->assertSame('ak_test_token', config('analytics.token'));
-        $this->assertSame('https://analytics.test', config('analytics.endpoint'));
         $this->assertSame('test-site', config('analytics.site_id'));
         $this->assertSame('testing', config('analytics.environment'));
         $this->assertTrue(config('analytics.enabled'));
@@ -73,7 +82,7 @@ class AnalyticsServiceProviderTest extends TestCase
 
     public function test_channel_level_override_is_respected(): void
     {
-        Http::fake(['https://analytics.test/errors/collect' => Http::response(null, 204)]);
+        Http::fake([$this->collectUrl => Http::response(null, 204)]);
 
         $this->app['config']->set('logging.channels.analytics', [
             'driver' => 'analytics',
@@ -95,7 +104,7 @@ class AnalyticsServiceProviderTest extends TestCase
 
     public function test_logging_an_exception_sends_report(): void
     {
-        Http::fake(['https://analytics.test/errors/collect' => Http::response(null, 204)]);
+        Http::fake([$this->collectUrl => Http::response(null, 204)]);
 
         $this->app['config']->set('logging.channels.analytics', [
             'driver' => 'analytics',
