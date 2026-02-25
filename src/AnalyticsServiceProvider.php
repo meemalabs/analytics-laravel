@@ -4,6 +4,7 @@ namespace Meemalabs\Analytics;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
+use Meemalabs\Analytics\Commands\AnalyticsTestCommand;
 use Monolog\Level;
 use Monolog\Logger;
 use Psr\Log\NullLogger;
@@ -21,9 +22,13 @@ class AnalyticsServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__.'/../config/analytics.php' => config_path('analytics.php'),
             ], 'analytics-config');
+
+            $this->commands([
+                AnalyticsTestCommand::class,
+            ]);
         }
 
-        Log::extend('analytics', function (array $app, array $config) {
+        Log::extend('analytics', function ($app, array $config) {
             $enabled = config('analytics.enabled', true);
             $token = config('analytics.token', '');
 

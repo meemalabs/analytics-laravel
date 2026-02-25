@@ -10,12 +10,9 @@ use Throwable;
 
 class AnalyticsLogHandler extends AbstractProcessingHandler
 {
-    // TODO: update once the production endpoint is finalized
-    public const ENDPOINT = 'https://analytics.stacks.com';
+    private const ENDPOINT = 'http://localhost:3001/errors/collect';
 
     private ErrorReportBuilder $builder;
-
-    private string $url;
 
     public function __construct(
         private string $token,
@@ -26,7 +23,6 @@ class AnalyticsLogHandler extends AbstractProcessingHandler
     ) {
         parent::__construct($level, $bubble);
 
-        $this->url = self::ENDPOINT.'/errors/collect';
         $this->builder = new ErrorReportBuilder($siteId, $environment);
     }
 
@@ -44,7 +40,7 @@ class AnalyticsLogHandler extends AbstractProcessingHandler
                 'Content-Type' => 'application/json',
             ])
                 ->timeout(5)
-                ->post($this->url, $payload);
+                ->post(self::ENDPOINT, $payload);
         } catch (Throwable) {
             // Silently fail — logging must never crash the app.
         }
