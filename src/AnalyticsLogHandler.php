@@ -12,6 +12,8 @@ class AnalyticsLogHandler extends AbstractProcessingHandler
 {
     private const ENDPOINT = 'http://localhost:3001/errors/collect';
 
+    public const DEFAULT_ENDPOINT = 'http://localhost:3001';
+
     private ErrorReportBuilder $builder;
 
     public function __construct(
